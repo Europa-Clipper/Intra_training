@@ -13,12 +13,15 @@ int main(){
     for(int i = 0; i < 3; ++i){
         plugins.push_back(std::thread([threadNumbers = thname::count.fetch_add(1)](){
             threadSetName("plugin-" + std::to_string(threadNumbers));
+
+						//plugins'son1
             std::thread t1([threadNumbers, sonThred = thname::count.fetch_add(1)](){
 							threadSetName("plugin" + std::to_string(threadNumbers) + "-son" + std::to_string(sonThred));
 							std::cout << "sonThread created" << std::endl;
 							while(1){}
             });
 
+						//plugins'son2
 						std::thread t2([threadNumbers, sonThred = thname::count.fetch_add(1)](){
 							threadSetName("plugin" + std::to_string(threadNumbers) + "-son" + std::to_string(sonThred));
 							std::cout << "sonThread created" << std::endl;
