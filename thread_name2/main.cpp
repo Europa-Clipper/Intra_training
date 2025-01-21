@@ -27,8 +27,8 @@ int main(){
 							std::cout << "sonThread created" << std::endl;
 							while(1){}
             });
-
             while(1){}
+            
         }));
     }
 
