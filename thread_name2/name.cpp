@@ -13,7 +13,7 @@ bool threadSetName(std::string name) {
     return false;
   }
 
-  pthread_setname_np(pthread_self(), name.c_str());
+  if(pthread_setname_np(pthread_self(), name.c_str()) != 0) 
 
   return true;
 }

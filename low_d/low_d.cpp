@@ -48,7 +48,7 @@ int main() {
 
     std::cout << "rdtsc : " << std::endl << "--------------------------------------------------" << std::endl;
     unsigned long long begin = __rdtsc();
-    for(unsigned long long i = 0; i < 800; ++i){
+    for(unsigned long long i = 0; i < 100; ++i){
         // if(i == 50){
         //     unsigned long long endd = __rdtsc();
         //     unsigned long long elapsed_cycle = endd - begin;
@@ -56,7 +56,9 @@ int main() {
         //     std::cout << "elapsed cycled: " << elapsed_cycle << std::endl;
         //     std::cout << "elapsed cycle trans to nano: " << transtime << "纳秒" << std:: endl;
         // }
-        vec[i % 9] = 20;
+
+
+        vec[i % 10] = 20;
     }
     unsigned long long endd = __rdtsc();
     unsigned long long elapsed_cycle = endd - begin;
@@ -69,14 +71,16 @@ int main() {
     std::cout << "chrono :" << std::endl << "------------------------------------------------" << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
     //unsigned long long begin = __rdtsc();
-    for (unsigned long long i = 0; i < 800; ++i) {
+    for (unsigned long long i = 0; i < 100; ++i) {
         // if(i == 50){
         //     std::cout << "i == 50" << std:: endl;
         //     auto midend = std::chrono::high_resolution_clock::now();
         //     auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(midend - start);
         //     std::cout << "已耗时：" << duration.count() << " 纳秒" << std::endl;
         // }
-        vec[i % 9] = 30;
+
+
+        vec[i % 10] = 30;
     }
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
@@ -88,6 +92,7 @@ int main() {
     std::time_t end_time_t = std::chrono::high_resolution_clock::to_time_t(end);
     std::cout << "开始时间: " << std::put_time(std::localtime(&start_time_t), "%Y-%m-%d %H:%M:%S") << std::endl;
     std::cout << "结束时间: " << std::put_time(std::localtime(&end_time_t), "%Y-%m-%d %H:%M:%S") << std::endl;
-
+    while(1){}
+    
     return 0;
 }
