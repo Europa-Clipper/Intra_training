@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [ -d "build" ]; then
+    rm -rf build
+fi
+
+mkdir build
+cd build || exit
+
+cmake ..
+if [ $? -ne 0 ]; then
+    echo "CMake failed"
+    exit 1
+fi
+
+# 运行make
+make
+if [ $? -ne 0 ]; then
+    echo "Make failed"
+    exit 1
+fi
+
+echo "build success"
