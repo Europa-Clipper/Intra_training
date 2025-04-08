@@ -1,3 +1,6 @@
+#ifndef DLOG_H
+#define DLOG_H
+
 #include <iostream>
 #include <chrono>
 #include <ctime>
@@ -12,7 +15,9 @@ namespace dji {
 
   void LogInfo(const char* func, std::string msg);
 
+  std::string get_time_now();
+
 } //namespace dlog
 } //namespcae dji
 
-
+#endif

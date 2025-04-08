@@ -4,7 +4,7 @@ project(upload)
 set(upload_SOURCES 
     #src/a.cpp
     Reader/src/PipeReader.cpp
-    #a2/src/a2.cpp
+    UploadMgr/uploadMgr.cpp
 )
 
 # 添加 a 模块的动态库
@@ -14,7 +14,7 @@ add_library(upload SHARED ${upload_SOURCES})
 target_include_directories(upload PUBLIC 
     #${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/Reader/include
-    #${CMAKE_CURRENT_SOURCE_DIR}/a2/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/UploadMgr
 )  
 
 target_link_libraries(upload utility)

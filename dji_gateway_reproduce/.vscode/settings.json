@@ -54,6 +54,20 @@
     "typeinfo": "cpp",
     "iomanip": "cpp",
     "stop_token": "cpp",
-    "thread": "cpp"
+    "thread": "cpp",
+    "any": "cpp",
+    "bitset": "cpp",
+    "condition_variable": "cpp",
+    "csignal": "cpp",
+    "cstring": "cpp",
+    "list": "cpp",
+    "map": "cpp",
+    "set": "cpp",
+    "unordered_set": "cpp",
+    "regex": "cpp",
+    "future": "cpp",
+    "mutex": "cpp",
+    "variant": "cpp",
+    "filesystem": "cpp"
   }
 }

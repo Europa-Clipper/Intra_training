@@ -6,11 +6,6 @@
 namespace dji{
   
   IFStream::IFStream(std::string path){
-    // if(!p){
-    //   dlog::LogWarn(__func__, "NULL FILE");
-    //   return;
-    // }
-    // _p = p;
 
     if(path.size() == 0){
       dlog::LogWarn(__func__, "NULL PATH");
@@ -28,9 +23,15 @@ namespace dji{
     else{
       dlog::LogWarn(__func__, "file set fail");
       delete(stream);
+      return;
     }
     _p = static_cast<void*>(stream);
     #endif
+  }
+
+  IFStream::~IFStream(){
+    delete(static_cast<std::ifstream*>(_p));
+    return;
   }
 
   int64_t IFStream::Tell(){
@@ -68,11 +69,17 @@ namespace dji{
     #else
     std::ifstream* ifs = static_cast<std::ifstream*>(_p);
     if(ifs->is_open()){
-      ifs->read(buff, size);
-      if(static_cast<int64_t>(ifs->gcount()) != size && !ifs->eof()){
-        return -2;
+      std::int64_t remain_size = size;
+      std::int64_t read_offset{0};
+      while (remain_size != 0 && !ifs->eof()) {
+        ifs->read(buff + read_offset, remain_size);
+        remain_size -= static_cast<int64_t>(ifs->gcount());
+        read_offset += static_cast<int64_t>(ifs->gcount());
+        //std::cout<<"read num is"<<static_cast<int64_t>(ifs->gcount())<<std::endl;
       }
-      //std::string msg = "readed nums is " + std::to_string(ifs->gcount());
+      // (static_cast<int64_t>(ifs->gcount()) != size && !ifs->eof()){
+      //   return -2;
+      // }
       //dlog::LogInfo(__func__, msg);
       return 0;
     }
@@ -83,10 +90,10 @@ namespace dji{
 
   }
 
-  int IFStream::release_p(){
-    delete(static_cast<std::ifstream*>(_p));
-    return 0;
-  }
+  // int IFStream::release_p(){
+  //   delete(static_cast<std::ifstream*>(_p));
+  //   return 0;
+  // }
 
 
 }

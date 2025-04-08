@@ -14,7 +14,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # 添加子目录
 add_subdirectory(src/utility)
 add_subdirectory(src/upload)
-#add_subdirectory(c)
+add_subdirectory(src/http_line)
 
 # 生成可执行文件
 add_executable(${PROJECT_NAME} src/main.cpp)
@@ -26,5 +26,4 @@ target_link_libraries(${PROJECT_NAME} utility upload)
 target_include_directories(${PROJECT_NAME} PUBLIC 
     upload/include
     utility/include
-    #c/include
 )    
