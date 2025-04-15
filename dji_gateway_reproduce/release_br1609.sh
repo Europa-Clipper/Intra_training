@@ -7,6 +7,11 @@ fi
 mkdir build
 cd build || exit
 
+if [ -d "bin" ]; then
+    rm -rf bin
+fi
+mkdir bin
+
 cmake ..
 if [ $? -ne 0 ]; then
     echo "CMake failed"

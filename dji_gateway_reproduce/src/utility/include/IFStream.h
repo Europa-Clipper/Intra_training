@@ -15,11 +15,13 @@ namespace dji {
     std::string _path{""};
 
   public:
+    //std::int64_t finishedSize{0};
+    
     IFStream(std::string path);
     ~IFStream();
 
     int64_t Tell();
-    int64_t Read(char* buff, size_t size);
+    int64_t Read(char* buff, size_t size, int64_t totolSize, int64_t& finishedSize);
     
     int release_p(); //TBD
     

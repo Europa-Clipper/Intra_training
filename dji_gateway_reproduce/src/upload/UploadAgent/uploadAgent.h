@@ -7,13 +7,13 @@ namespace dji {
       unUpload = 0,
       uploading = 1,
       uploaded = 2,
-      upload_fail = 3
+      upload_failed = 3
     };
     
     class uploadAgent
     {
     private:
-      std::unordered_map<int, int>upload_records;
+      std::unordered_map<int, upload_status>upload_records; //<id, status>
       
     public:
       uploadAgent();

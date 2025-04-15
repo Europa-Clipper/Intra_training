@@ -8,8 +8,9 @@ set(PROJECT_NAME dji-gateway)
 project(${PROJECT_NAME})
 
 # 设置 C++ 标准
-set(CMAKE_CXX_STANDARD 11)
+#set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
 # 添加子目录
 add_subdirectory(src/utility)

@@ -21,7 +21,7 @@ namespace dji{
       dlog::LogInfo(__func__, "file set");
     }
     else{
-      dlog::LogWarn(__func__, "file set fail");
+      dlog::LogWarn(__func__, "file set fail, path: " , path);
       delete(stream);
       return;
     }
@@ -41,19 +41,33 @@ namespace dji{
     }
 
     #ifdef __QNX__
-    // FILE* p = (FILE*)_p;
-    return (int64_t)::ftell((FILE*)_p);
+      // FILE* p = (FILE*)_p;
+      return (int64_t)::ftell((FILE*)_p);
     #else
-    //std::ifstream* fd = static_cast<std::ifstream*>(_p);
-    //dlog::LogInfo(__func__, "path or file valid");
-    if(!static_cast<std::ifstream*>(_p)->is_open()){
-      dlog::LogWarn(__func__, "file not open");
-    }
-    return static_cast<int64_t>((static_cast<std::ifstream*>(_p))->tellg());
+    // //std::ifstream* fd = static_cast<std::ifstream*>(_p);
+    // //dlog::LogInfo(__func__, "path or file valid");
+    // if(!static_cast<std::ifstream*>(_p)->is_open()){
+    //   dlog::LogWarn(__func__, "file not open");
+    //   return -1;
+    // }
+    // return static_cast<int64_t>((static_cast<std::ifstream*>(_p))->tellg());
+
+    std::ifstream* ifs = static_cast<std::ifstream*>(_p);
+        if (!ifs->is_open()) {
+            dlog::LogWarn(__func__, "file not open");
+            return -1;
+        }
+        try {
+            //std::cout<<"now trying tell..."<<std::endl;
+            return static_cast<int64_t>(ifs->tellg());
+        } catch (const std::ios_base::failure& e) {
+            dlog::LogWarn(__func__, "Error getting file position: " , std::string(e.what()));
+            return -1;
+        }
     #endif
   }
 
-  int64_t IFStream::Read(char* buff, size_t size){
+  int64_t IFStream::Read(char* buff, size_t size, int64_t totolsize, int64_t& finishedSize){
     if(_path.size() == 0 || !_p){
       dlog::LogWarn(__func__, "path or file invalid");
       return -1;
@@ -68,26 +82,36 @@ namespace dji{
     /**/
     #else
     std::ifstream* ifs = static_cast<std::ifstream*>(_p);
-    if(ifs->is_open()){
-      std::int64_t remain_size = size;
-      std::int64_t read_offset{0};
-      while (remain_size != 0 && !ifs->eof()) {
-        ifs->read(buff + read_offset, remain_size);
-        remain_size -= static_cast<int64_t>(ifs->gcount());
-        read_offset += static_cast<int64_t>(ifs->gcount());
-        //std::cout<<"read num is"<<static_cast<int64_t>(ifs->gcount())<<std::endl;
-      }
-      // (static_cast<int64_t>(ifs->gcount()) != size && !ifs->eof()){
-      //   return -2;
-      // }
-      //dlog::LogInfo(__func__, msg);
-      return 0;
+    if (ifs->is_open()) {
+        std::int64_t remain_size = std::min(static_cast<std::int64_t>(size), totolsize - finishedSize);
+        std::int64_t should_read_size = remain_size;
+        std::int64_t read_offset{0};
+
+        while (remain_size > 0) {
+          ifs->read(buff + read_offset, remain_size);
+          std::streamsize bytes_read = ifs->gcount();
+          dlog::LogInfo(__func__, "remain size: ", remain_size, "readoffset: ", read_offset);
+          if (bytes_read == 0) {
+              if (ifs->eof()) {
+                  dlog::LogInfo(__func__, "reached end of file ");
+                  break;
+              } else {
+                  // 读取错误
+                  dlog::LogWarn(__func__, "Read error");
+                  return -1;
+              }
+          }
+
+          remain_size -= bytes_read;
+          read_offset += bytes_read;
+        }
+      dlog::LogInfo(__func__, "aft remain size: ", remain_size, "readoffset: ", read_offset);
+      finishedSize += read_offset;
+      return should_read_size - remain_size;
     }
-    dlog::LogWarn(__func__, "file is not open");
+
     return -1;
-
     #endif
-
   }
 
   // int IFStream::release_p(){

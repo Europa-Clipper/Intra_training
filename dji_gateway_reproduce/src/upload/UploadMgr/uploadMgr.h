@@ -22,6 +22,7 @@ namespace dji {
       std::string content_path{};
       int file_count;
       int uploaded_file_count{0};
+      std::unordered_map<std::string, int64_t>upload_list; //<file name , file size>
 
       int deal_content();
       int get_upload_id();
@@ -29,7 +30,7 @@ namespace dji {
       
       private:
       int upload_id;
-      std::unordered_map<std::string, int64_t>upload_list;
+      
       bool valid{false};
       
 

@@ -15,17 +15,18 @@ namespace dji{
 
 			int Next() override;
 			int releaseCache();
+			std::int64_t finished_size{0};
 
 			std::string getReadCache();
 
-			PipeReader(std::string path, std::int64_t totolSzie, std::int64_t partSize);
+			PipeReader(std::string path, std::int64_t totolSzie, std::int64_t partSize);//(path, totolSize, totolSize/6 + 1)
 			~PipeReader();
 
 			private:
 
 			const std::int64_t totol_size;
 			const std::int64_t part_size;
-			std::int64_t finished_size{0};
+			
 			std::string readcache{};
 
 			bool finished{false};

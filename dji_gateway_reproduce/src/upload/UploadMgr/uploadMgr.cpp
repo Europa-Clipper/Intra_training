@@ -22,7 +22,7 @@ namespace dji{
         while ((entry = readdir(dir)) != nullptr) {
           if (entry->d_type == DT_REG) {
               ++count;
-              dlog::LogInfo(__func__, "found file :" + std::string(entry->d_name));
+              dlog::LogInfo(__func__, "found:" , std::string(entry->d_name));
             }
         }
         closedir(dir);
@@ -33,7 +33,7 @@ namespace dji{
 
     int uploadMgr::deal_content(){
       DIR* dir = opendir(content_path.c_str());
-      dlog::LogInfo(__func__, "content path :" + content_path);
+      dlog::LogInfo(__func__, "content path :" , content_path);
       struct dirent* entry;
       
       while((entry = readdir(dir)) != nullptr){
@@ -53,14 +53,14 @@ namespace dji{
 
       for(auto it: upload_list){
         //std::cout<<"name : "<<it.first<<"  size : "<<it.second<<std::endl;
-        dlog::LogInfo(__func__, "file name : " + it.first + "   size : " + std::to_string(it.second));
+        dlog::LogInfo(__func__, "file name : " , it.first , "   size : " , std::to_string(it.second));
       }
 
       return 0;
     }
 
     bool uploadMgr::isReqValid(){
-      dlog::LogInfo(__func__, "valid is " + std::to_string(valid));
+      dlog::LogInfo(__func__, "valid is " , std::to_string(valid));
       return valid;
     }
 
