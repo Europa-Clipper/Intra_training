@@ -20,12 +20,13 @@ int main(){
   int n = 1;
   while(pipread.Next() != -1){
     //dji::dlog::LogInfo(__func__, "now printing new block");
-    std::cout<<"now printing block "<< n <<" : "<<std::endl;
+    //std::cout<<"now printing block "<< n <<" : "<<std::endl;
+		dji::dlog::LogInfo(__func__, "now printing block...");
     std::cout<<pipread.getReadCache()<<std::endl<<std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(1));
     ++n;
   }
-  dji::dlog::LogInfo(__func__, "print done");
+  dji::dlog::LogInfo(__func__, "print done, n = ", n);
 
   // dji::gateway::uploadMgr upmgr("/home/nakanomiku/wxx/intra-train/Intra_training/dji_gateway_reproduce/upload_test");
   // if(upmgr.isReqValid()){

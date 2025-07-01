@@ -4,9 +4,9 @@
 int main(){
   int yygx{0}, llss{0};
 
-  std::random_device rd;  // 真随机数生成器
+  std::random_device rd; 
   std::mt19937 gen(rd()); // Mersenne Twister 引擎
-  std::uniform_int_distribution<> dis(2, 1002);  // 生成 0 到 99 之间的整数
+  std::uniform_int_distribution<> dis(2, 1002); 
 
   for(int i = 0; i < 10000; ++i){
     int random_number = dis(gen);

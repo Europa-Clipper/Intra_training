@@ -23,8 +23,8 @@ target_include_directories(upload PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../upload/UploadMgr
 )  
 
-target_link_libraries(server utility upload)
-target_link_libraries(client utility upload)
+target_link_libraries(server utility upload pthread)
+target_link_libraries(client utility upload pthread)
 # 查找 pthread 库
 find_package(Threads REQUIRED)
 

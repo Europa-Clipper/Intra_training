@@ -98,6 +98,11 @@ int dealWithResBody(std::string body, httplib::Client& cli){
 	return 0;
 }
 
+std::string checkAckFromBody(std::string body){
+	//int pos = body.find("ack=");
+	return body.substr(body.find("ack="));
+}
+
 int main(int argc , char* argv[]) {
     using namespace dji;
 
@@ -111,44 +116,71 @@ int main(int argc , char* argv[]) {
     } else {
       std::cerr << "get fir fail" << std::endl;
     }
-
+		dlog::LogWarn(__func__, "reoivheoirbverbv");
     //httplib::Client cli("4005xz95wp70.vicp.fun", 80);
 		httplib::Client cli("localhost", 8080);
 
-    // std::ifstream file("/home/nakanomiku/wxx/intra-train/Intra_training/dji_gateway_reproduce/upload_test/testfile571.conf");
-    // if (!file) {
-    //   dlog::LogWarn(__func__, "Failed to open file");
-    //   return 1;
-    // }
-
-    // //std::string fileContent((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-    // file.close();
+    
     std::string fileContent{"test wheather can get the job todo"};
+		if(argc > 1)std::cout<<"showing agrc"<<argc<<"  "<<argv[0]<<"  "<<argv[1]<<std::endl;
+		if(argc > 1 && std::string(argv[1]) == "chat"){
+			std::cout<<"chat mode"<<std::endl<<std::endl;
+			
+			std::unique_ptr<std::thread> thr1 = std::make_unique<std::thread>([&fileContent, &cli](){
+				bool getrecv{false};
+				size_t ack{0};
 
-    while(1){
-      auto res = cli.Post("/getJob", fileContent, "text/plain");
+				while(1){
+					getrecv = false;
+					std::cout<<"type words: "<<std::endl<<"(type @stop@chat if want to stop chat)"<<std::endl;
+					std::getline(std::cin, fileContent);
+					if(fileContent == "@stop@chat")break;
+					++ack;
+					//auto res = cli.Post("/chat", fileContent + "//ack=" + std::to_string(++ack), "text/plain");
+					// dlog::LogInfo(__func__, "msg sent");
+					std::cout<<dlog::get_time_now()<<"  sending msg... ack = "<<ack<<std::endl;
+					while(!getrecv){
+						//auto res = cli.Post("/chat", fileContent + "//ack=" + std::to_string(ack), "text/plain");
+						auto res = cli.Post("/chat", fileContent, "text/plain");
+						if(res){
+							//std::cout<<dlog::get_time_now()<<" recv ans:  "<<res->body<<"  ack ="<<res->body.substr(res->body.find("ack=") + 4);
+							std::cout<<dlog::get_time_now()<<"  "<<res->body<<std::endl;
+							if(res)getrecv = true;
+						}
+						// else{
+						// 	while(!getrecv){
+						// 		res = cli.Post("/chat", fileContent + "//ack=" + std::to_string(ack), "text/plain");
 
-      if (res) {
-        dlog::LogInfo(__func__, "connect success, res stauts: ", res->status);
-        dlog::LogInfo(__func__, "res body is: ", res->body);
-				int ret = dealWithResBody(res->body, cli);
-				dlog::LogInfo(__func__, "deal res body, ret = ", ret);
-      } else {
-        dlog::LogWarn(__func__, "request failed : ", res.error());
-      }
+						// 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+						// 	}
+						// }
+						std::this_thread::sleep_for(std::chrono::milliseconds(500));
+					}
+					
+				}
+			});
+			if(thr1->joinable()){
+				thr1->join();
+			}
+		}
+		else{
+			while(1){
+				dlog::LogWarn(__func__, "no chat mode");
+				auto res = cli.Post("/getJob", fileContent, "text/plain");
 
-			std::this_thread::sleep_for(std::chrono::seconds(2));
-    }
+				if (res) {
+					dlog::LogInfo(__func__, "connect success, res stauts: ", res->status);
+					dlog::LogInfo(__func__, "res body is: ", res->body);
+					int ret = dealWithResBody(res->body, cli);
+					dlog::LogInfo(__func__, "deal res body, ret = ", ret);
+				} else {
+					dlog::LogWarn(__func__, "request failed : ", res.error());
+				}
 
+				std::this_thread::sleep_for(std::chrono::seconds(2));
+			}
+		}
 
-    // auto res = cli.Post("/upload", fileContent, "text/plain");
-
-    // if (res) {
-    //   dlog::LogInfo(__func__, "connect success, res stauts: ", res->status);
-    //   dlog::LogInfo(__func__, "res body is: ", res->body);
-    // } else {
-		// dlog::LogWarn(__func__, "request failed : ", res.error());
-    // }
 
     return 0;
 }
