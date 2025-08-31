@@ -11,9 +11,11 @@ namespace dji{
 
       if(finished)return -1;
 
-      char buffer[part_size+1];
+      //char buffer[part_size+1];
+
+      readcache.resize(part_size);
       //std::cout<<"before tell:"<<ifst->Tell()<<std::endl;
-      int64_t ret = ifst->Read(buffer, part_size, totol_size, finished_size);
+      int64_t ret = ifst->Read(&readcache[0], part_size, totol_size, finished_size);
       //dlog::LogInfo(__func__, "ifst->read ret is : ", ret);
       if(ret == -1){
         dlog::LogWarn(__func__, "read fial");
@@ -24,11 +26,15 @@ namespace dji{
         dlog::LogWarn(__func__, "tell wrong ");
         return -1;
       }
-      //std::cout<<__func__<<"  finished size: "<<finished_size<<std::endl;
-      if(finished_size >= totol_size)finished = true;
-      std::cout<<"aft tell= "<<finished_size<<std::endl;
-      buffer[ret] = '\0';
-      readcache.assign(buffer, ret);
+      std::cout<<__func__<<"  finished size: "<<finished_size<<std::endl;
+      if(finished_size >= totol_size){
+        finished = true;
+        dji::dlog::LogInfo(__func__, "finished");
+      }
+      //std::cout<<"aft tell= "<<finished_size<<std::endl;
+      readcache.resize(ret);
+      //buffer[ret] = '\0';
+      //readcache.assign(buffer, ret);
       //dlog::LogInfo(__func__, "readcache = ", readcache);
       //dlog::LogInfo(__func__, readcache);
       return 1;
@@ -41,12 +47,19 @@ namespace dji{
       return;
     }
 
-    PipeReader::~PipeReader(){
-      if(ifst)delete(ifst);
-    }
+    // PipeReader::~PipeReader(){
+    //   if(ifst)delete(ifst);
+    // }
 
     std::string PipeReader::getReadCache(){
       return readcache;
+    }
+
+    bool PipeReader::releaseCache(){
+      readcache.clear();
+      readcache.shrink_to_fit();
+
+      return true;
     }
 
   }

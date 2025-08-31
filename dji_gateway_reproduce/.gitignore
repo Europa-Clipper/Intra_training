@@ -48,3 +48,9 @@ ipch
 
 3rdParty/cpp-httplib-master/test
 3rdParty/cpp-httplib-master/example
+
+
+cpu.h
+cpu.cpp
+shared.cpp
+shared.h

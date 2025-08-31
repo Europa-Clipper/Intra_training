@@ -96,7 +96,7 @@ namespace dji{
                   dlog::LogInfo(__func__, "reached end of file ");
                   break;
               } else {
-                  dlog::LogWarn(__func__, "Read error");
+                  dlog::LogWarn(__func__, "Read error: ", _path);
                   return -1;
               }
           }

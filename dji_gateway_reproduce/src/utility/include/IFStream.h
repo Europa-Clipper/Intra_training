@@ -23,10 +23,9 @@ namespace dji {
     int64_t Tell();
     int64_t Read(char* buff, size_t size, int64_t totolSize, int64_t& finishedSize);
     
-    int release_p(); //TBD
-    
-    int openfile(); //TBD
-    int synfile(); //TBD
+    int release_p(); //tbd
+    int openfile(); //tbd
+    int synfile(); //tbd
 
   };
   

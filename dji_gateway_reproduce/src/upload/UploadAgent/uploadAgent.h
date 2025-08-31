@@ -1,4 +1,7 @@
 #include <iostream>
+#include <unordered_map>
+
+#include "../Reader/include/PipeReader.h"
 
 namespace dji {
   namespace gateway {

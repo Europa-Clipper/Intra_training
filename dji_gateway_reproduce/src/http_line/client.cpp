@@ -13,7 +13,8 @@ int dealWithResBody(std::string body, httplib::Client& cli){
 		std::string dirr;
 		char* result = getcwd(buffer, bufferSize);
     if (result != nullptr) {
-      std::cout << "curr dir is : " << buffer << std::endl;
+      //std::cout << "curr dir is : " << buffer << std::endl;
+			dji::dlog::LogInfo(__func__, "curr dir is: ", buffer);
 			dirr = std::string(buffer);
 			std::cout<<"str: "<< dirr <<std::endl;
     } else {
@@ -67,14 +68,14 @@ int dealWithResBody(std::string body, httplib::Client& cli){
 			if((name.size() >= 5) && (name.substr(name.size() - 4) == ".txt"|| name.substr(name.size() - 5) == ".conf" ) && (upmgr.upload_list.find(name + ".upload") == upmgr.upload_list.end())){
 
 				dji::gateway::PipeReader pipreadr(upmgr.content_path + "/" + it->first, it->second, it->second / 6 + 1);
-				int times{0};
+				//int times{0};
 				while(pipreadr.Next()!= -1){
 					//std::string patch = &(pipreadr.getReadCache());
 					std::this_thread::sleep_for(std::chrono::seconds(1));
 					auto res = cli.Post("/sendFile", (pipreadr.getReadCache()), "text/plain");
 					//dji::dlog::LogInfo(__func__, "current sent part readcache: ", pipreadr.getReadCache());
-					++times;
-					std::cout<<"pao le "<<times<<" ci"<<std::endl;
+					//++times;
+					//std::cout<<"pao le "<<times<<" ci"<<std::endl;
 				}
 				auto res = cli.Post("/fileDone", it->first, "text/plain");
 				
@@ -104,6 +105,7 @@ std::string checkAckFromBody(std::string body){
 }
 
 int main(int argc , char* argv[]) {
+
     using namespace dji;
 
 		const int bufferSize = 1024;

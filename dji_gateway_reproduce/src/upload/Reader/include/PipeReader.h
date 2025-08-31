@@ -12,20 +12,21 @@ namespace dji{
 			public:
 
 			IFStream* ifst;
-
-			int Next() override;
-			int releaseCache();
 			std::int64_t finished_size{0};
 
+			int Next() override;
+			bool releaseCache();
 			std::string getReadCache();
+			bool reset(std::string path, std::int64_t totolSzie, std::int64_t partSize);
 
 			PipeReader(std::string path, std::int64_t totolSzie, std::int64_t partSize);//(path, totolSize, totolSize/6 + 1)
-			~PipeReader();
+			~PipeReader()=default;
+			
 
 			private:
 
-			const std::int64_t totol_size;
-			const std::int64_t part_size;
+			std::int64_t totol_size;
+			std::int64_t part_size;
 			
 			std::string readcache{};
 

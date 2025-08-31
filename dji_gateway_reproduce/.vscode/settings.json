@@ -68,6 +68,8 @@
     "future": "cpp",
     "mutex": "cpp",
     "variant": "cpp",
-    "filesystem": "cpp"
+    "filesystem": "cpp",
+    "numbers": "cpp",
+    "semaphore": "cpp"
   }
 }

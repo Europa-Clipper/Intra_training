@@ -47,7 +47,7 @@ namespace dji{
     //   auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
     //   std::cout <<"[" <<std::put_time(localTime, "%Y-%m-%d %H:%M:%S")<< '.' << std::setfill('0') << std::setw(3) 
     //   << ms.count()<<"][I]"<<"["<<first<<"]"<<"Info :";
-    //   if constexpr (sizeof...(args) > 0) {//if constexpr 属于编译时条件判断，意味着在编译阶段就会根据条件决定是否包含某段代码，而不是在运行时判断。这样能减少运行时开销
+    //   if constexpr (sizeof...(args) > 0) {
     //     std::cout << " ";
     //   }
     //   log(args...);

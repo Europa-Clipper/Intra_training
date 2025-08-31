@@ -3,8 +3,13 @@
 #include <chrono>
 #include <queue>
 
-#include "../../3rdParty/cpp-httplib-master/httplib.h"
-#include "../utility/include/dlog.h"
+// #include "../../3rdParty/cpp-httplib-master/httplib.h"
+// #include "../utility/include/dlog.h"
+#include "server.h"
+
+namespace dji{
+
+namespace gateway{
 
 
 enum path{
@@ -17,7 +22,6 @@ enum path{
 
 void printRequestInfo(const httplib::Request& req) {
   dji::dlog::LogInfo(__func__, "printing request info...");
-  //std::cout << "Request Method: " << req.method << std::endl;
 
   std::cout << "Request path: " << req.path << std::endl;
 
@@ -34,17 +38,12 @@ void printRequestInfo(const httplib::Request& req) {
   // }
 
   if (!req.body.empty()) {
-    std::cout << "bod:" << std::endl;
-    std::cout << req.body << std::endl;
+    std::cout<<"/////////////////////////////////////////////////////////////////////////////////"<<std::endl<<std::endl;
+    //std::cout << "bod:" << std::endl;
+    std::cout << req.body << std::endl<<std::endl;
+    std::cout<<"/////////////////////////////////////////////////////////////////////////////////"<<std::endl;
   }
 }
-
-struct chatmsg{
-  size_t id;
-  size_t curnum;
-  std::string cnt;
-  std::string timestamp;
-};
 
 struct chatmsg string_to_chatmsg(const std::string& str){
   struct chatmsg msg;//"id=7curnum=201cnt=123time=2025.4.16 15:57"
@@ -57,95 +56,95 @@ struct chatmsg string_to_chatmsg(const std::string& str){
 }
 
 
-// void serverThread(std::queue<std::string>& job){
-//   httplib::Server svr;
-//   using namespace dji;
+void serverThread(std::queue<std::string>& job){
+  httplib::Server svr;
+  using namespace dji;
 
-//   std::string buffer;
-//   std::string store_path{"/home/nakanomiku/wxx/intra-train/Intra_training/dji_gateway_reproduce/store_path"};
+  std::string buffer;
+  std::string store_path{"/home/nakanomiku/wxx/intra-train/Intra_training/dji_gateway_reproduce/store_path"};
 
-//   svr.Post("/upload", [](const httplib::Request& req, httplib::Response& res) {
+  svr.Post("/upload", [](const httplib::Request& req, httplib::Response& res) {
 
-//       res.set_header("Access-Control-Allow-Origin", "*");
+      res.set_header("Access-Control-Allow-Origin", "*");
 
-//       if (req.has_header("Content-Type") && req.get_header_value("Content-Type") == "text/plain") {
+      if (req.has_header("Content-Type") && req.get_header_value("Content-Type") == "text/plain") {
 
-//         const char* dirname = "received_files";
-//         int status = mkdir(dirname, 0777); // 使用 mkdir 函数创建目录，权限设置为 0777（可读、可写、可执行)
-//         if (status == 0) {
-//           dlog::LogInfo(__func__, "Directory created successfully.");
-//         } else {
-//           dlog::LogWarn(__func__, "Failed to create directory");
-//         }
+        const char* dirname = "received_files";
+        int status = mkdir(dirname, 0777); // 使用 mkdir 函数创建目录，权限设置为 0777（可读、可写、可执行)
+        if (status == 0) {
+          dlog::LogInfo(__func__, "Directory created successfully.");
+        } else {
+          dlog::LogWarn(__func__, "Failed to create directory");
+        }
 
-//         std::ofstream outFile(std::string(dirname) + "/" + dlog::get_time_now());
-//         //dlog::LogInfo(__func__, "header: ");
-//         printRequestInfo(req);
-//           if (outFile) {
-//               outFile << req.body;
-//               outFile.close();
-//               res.set_content("kan dao zhe ge ,shuo ming ce shi cheng gong le", "text/plain");
-//           } else {
-//               res.status = 500;
-//               res.set_content("Failed to save file", "text/plain");
-//           }
-//         } else {
-//           res.status = 400;
-//           res.set_content("Invalid content type", "text/plain");
-//         }
-//     });
+        std::ofstream outFile(std::string(dirname) + "/" + dlog::get_time_now());
+        //dlog::LogInfo(__func__, "header: ");
+        printRequestInfo(req);
+          if (outFile) {
+              outFile << req.body;
+              outFile.close();
+              res.set_content("kan dao zhe ge ,shuo ming ce shi cheng gong le", "text/plain");
+          } else {
+              res.status = 500;
+              res.set_content("Failed to save file", "text/plain");
+          }
+        } else {
+          res.status = 400;
+          res.set_content("Invalid content type", "text/plain");
+        }
+    });
 
-//   svr.Post("/getJob", [&job](const httplib::Request& req, httplib::Response& res){
-//     res.set_header("Acces-Control-Allow-Orign", "*");
+  svr.Post("/getJob", [&job](const httplib::Request& req, httplib::Response& res){
+    res.set_header("Acces-Control-Allow-Orign", "*");
 
-//     assert(req.path == "/getJob");
-//     if(job.size() != 0){
-//       res.set_content(job.front(), "text/plain");
-//       dlog::LogInfo(__func__, "job sent: ", job.front());
-//       job.pop();
-//       dlog::LogInfo(__func__, "receive getJob request and sent");
-//     }
-//     else{
-//       dlog::LogWarn(__func__, "no current job !");
-//       res.set_content("null", "text/plain");
-//     }
-//   });
+    assert(req.path == "/getJob");
+    if(job.size() != 0){
+      res.set_content(job.front(), "text/plain");
+      dlog::LogInfo(__func__, "job sent: ", job.front());
+      job.pop();
+      dlog::LogInfo(__func__, "receive getJob request and sent");
+    }
+    else{
+      dlog::LogWarn(__func__, "no current job !");
+      res.set_content("null", "text/plain");
+    }
+  });
 
-//   svr.Post("/sendFilesInfo", [](const httplib::Request& req, httplib::Response& res){
-//     res.set_header("Acces-Control-Allow-Orign", "*");
-//     printRequestInfo(req);
-//     res.set_content("shou dao files info le", "text/plain");
+  svr.Post("/sendFilesInfo", [](const httplib::Request& req, httplib::Response& res){
+    res.set_header("Acces-Control-Allow-Orign", "*");
+    printRequestInfo(req);
+    res.set_content("shou dao files info le", "text/plain");
     
-//   });
+  });
 
-//   svr.Post("/sendFile", [&buffer](const httplib::Request& req, httplib::Response& res){
-//     dlog::LogInfo(__func__, "receiving ...");
-//     buffer += req.body;
-//     res.set_content("part get", "text/plain");
-//   });
+  svr.Post("/sendFile", [&buffer](const httplib::Request& req, httplib::Response& res){
+    dlog::LogInfo(__func__, "receiving ...");
+    buffer += req.body;
+    res.set_content("part get", "text/plain");
+  });
 
-//   svr.Post("/fileDone", [&buffer, store_path](const httplib::Request& req, httplib::Response& res){
-//     dlog::LogInfo(__func__, " end tag");
-//     std::ofstream file(store_path + "/" + req.body);
-//     dlog::LogInfo(__func__, "REoF:" , req.body);
-//     if(file.is_open()){
-//       file << buffer ;
-//       file.close();
-//     }
-//     else{
-//       dji::dlog::LogWarn(__func__, "file not open");
-//     }
-//     res.set_content("get", "text/plain");
-//     buffer.clear();
-//   });
+  svr.Post("/fileDone", [&buffer, store_path](const httplib::Request& req, httplib::Response& res){
+    dlog::LogInfo(__func__, " end tag");
+    std::ofstream file(store_path + "/" + req.body);
+    dlog::LogInfo(__func__, "REoF:" , req.body);
+    if(file.is_open()){
+      file << buffer ;
+      file.close();
+    }
+    else{
+      dji::dlog::LogWarn(__func__, "file not open");
+    }
+    res.set_content("get", "text/plain");
+    buffer.clear();
+  });
 
-//   if (svr.listen("0.0.0.0", 8080)) {
-//   //if (svr.listen("localhost", 8080)) {
-//       dlog::LogInfo("server", "Server is running on port 9191...");
-//     } else {
-//       dlog::LogWarn("server", "Failed to start server.");
-//     }
-// }
+  if (svr.listen("0.0.0.0", 8080)) {
+  //if (svr.listen("localhost", 8080)) {
+      dlog::LogInfo("server", "Server is running on port 9191...");
+    } else {
+      dlog::LogWarn("server", "Failed to start server.");
+    }
+}
 
 int main() {
   std::queue<std::string>job;
@@ -162,7 +161,10 @@ int main() {
       std::cout <<"||   get files info   ||   press 1"<<std::endl
                 <<"||     get files      ||   press 2"<<std::endl
                 <<"||       chat         ||   press 3"<<std::endl
-                <<"||    chat server     ||   press 4"<<std::endl;
+                <<"||    chat server     ||   press 4"<<std::endl
+                <<"||       exit         ||   press 5"<<std::endl
+                <<"||   get dir info     ||   press 6"<<std::endl
+                <<"||   change dir       ||   press cd + dir"<<std::endl;
 
       std::getline(std::cin, cmd);
 
@@ -198,9 +200,8 @@ int main() {
           int id_count{0};
           std::vector<chatmsg> msgline{};
           svr.Post("/serverchat", [&msgline](const httplib::Request& req, httplib::Response& res){
-            //req.body is incoming chatmsg...
+            //dlog::Loginfo(__func__, "req.body is incoming chatmsg...");
             msgline.emplace_back(string_to_chatmsg(req.body)/*body to chatmsg*/);
-
 
           });
 
@@ -216,17 +217,27 @@ int main() {
         chatServerThread->join();
       
       }
+      else if(cmd == "5"){
+        dji::dlog::LogInfo(__func__, "exit flag true, exiting...");
+        break;
+      }
+      else if(cmd == "6"){
+        //dji::dlog::LogInfo(__func__, "")
+        job.emplace("getDirInfo");
+      }
+      else if(cmd[0] == 'c' && cmd[1] == 'd'){
+        job.emplace(cmd);
+      }
       else{
         std::cout<<"valid input"<<std::endl;
       }
       continue;
     }
     else{
-      std::cout<<job.front()<<std::endl;
+      dji::dlog::LogInfo(__func__, job.front());
       std::unique_ptr<std::thread> unit1 = std::make_unique<std::thread>([&job, &svr, &end_flag](){
         using namespace dji;
 
-        
         std::string buffer;
         std::string store_path{"/home/nakanomiku/wxx/intra-train/Intra_training/dji_gateway_reproduce/store_path"};
 
@@ -284,6 +295,18 @@ int main() {
           
         });
 
+        svr.Post("/sendDirInfo", [](const httplib::Request& req, httplib::Response& res){
+          res.set_header("Access-Control-Allow-Orign", "*");
+          printRequestInfo(req);
+          res.set_content("get dir info", "text/plain");
+        });
+
+        svr.Post("/changedDir", [](const httplib::Request& req, httplib::Response& res){
+          res.set_header("Access-Control-Allow-Orign", "*");
+          printRequestInfo(req);
+          res.set_content("get changed dir", "text/plain");
+        });
+
         svr.Post("/sendFile", [&buffer](const httplib::Request& req, httplib::Response& res){
           dlog::LogInfo(__func__, "receiving ...");
           buffer += req.body;
@@ -296,7 +319,6 @@ int main() {
           res.set_content("finished", "text/plain");
         });
 
-
         svr.Post("/chat", [](const httplib::Request& req, httplib::Response& res){
           //dlog::LogInfo(__func__, "finifshed...");
           std::cout<<dlog::get_time_now()<<"  recv msg:"<<std::endl<<req.body<<std::endl;
@@ -304,12 +326,8 @@ int main() {
           std::cout<<"type return word:"<<std::endl;
           std::getline(std::cin, answord);
           std::cout<<"answord = "<<answord<<std::endl;
-          //std::string ackstr = req.body.substr(req.body.find("ack=") + 4);
-          //int ack = stoi(ackstr);
-          //res.set_content(answord + "ack=" + std::to_string(ack), "text/plain");
           res.set_content(answord, "text/plain");
         });
-
 
         svr.Post("/fileDone", [&buffer, store_path](const httplib::Request& req, httplib::Response& res){
           dlog::LogInfo(__func__, " end tag");
@@ -347,13 +365,9 @@ int main() {
       end_flag = false;
       std::cout<<"closing..."<<std::endl;
     }
-
-    
   }
-
-  // job.emplace("getFilesInfo");
-  // job.emplace("getFiles");
-
   return 0;
-  
 }
+
+  } //gaetway
+} //dji
